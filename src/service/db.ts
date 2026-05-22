@@ -1,19 +1,20 @@
 import Dexie, { type Table } from "dexie";
+import type { WeightEntry } from "./repository";
 
-export interface WeightEntry {
+export interface LocalWeightEntry extends Omit<WeightEntry, "id"> {
   id?: number;
-  weight: number;
-  date: string;
-  note?: string;
+  synced?: boolean;
+  remoteId?: number | string;
+  pendingDelete?: boolean;
 }
 
 class WeightDB extends Dexie {
-  entries!: Table<WeightEntry>;
+  entries!: Table<LocalWeightEntry, number>;
 
   constructor() {
     super("WeightLogger");
     this.version(1).stores({
-      entries: "++id, date",
+      entries: "++id, date, synced, remoteId, pendingDelete",
     });
   }
 }

@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { z } from "zod";
-import { db, type WeightEntry } from "../../service/db";
+import { db } from "../../service/db";
+import type { WeightEntry } from "../../service/repository";
 
 const todayString = new Date().toISOString().split("T")[0];
 
@@ -23,6 +24,8 @@ type Errors = Partial<Record<"weight" | "date" | "note", string>>;
 type FormProps = {
   onAdd?: (entry: WeightEntry) => void;
 };
+
+type NewWeightEntry = Omit<WeightEntry, "id">;
 
 export default function Form({ onAdd }: FormProps) {
   const [weight, setWeight] = useState<string>("");
@@ -63,7 +66,7 @@ export default function Form({ onAdd }: FormProps) {
 
     try {
       const entry: WeightEntry = parsed.data;
-      const id = await db.entries.add(entry);
+      const id = await db.entries.add(entry as NewWeightEntry);
       onAdd?.({ ...entry, id });
       setWeight("");
       setNote("");
@@ -92,10 +95,14 @@ export default function Form({ onAdd }: FormProps) {
 
       <div className="grid gap-4 sm:grid-cols-2 mt-10">
         <div>
-          <label className="block text-sm font-medium mb-1.5 text-slate-700 dark:text-slate-200">
+          <label
+            htmlFor="weight"
+            className="block text-sm font-medium mb-1.5 text-slate-700 dark:text-slate-200"
+          >
             Weight (kg)
           </label>
           <input
+            id="weight"
             type="number"
             min={30}
             max={300}
@@ -120,10 +127,14 @@ export default function Form({ onAdd }: FormProps) {
         </div>
 
         <div>
-          <label className="block text-sm font-medium mb-1.5 text-slate-700 dark:text-slate-200">
+          <label
+            htmlFor="date"
+            className="block text-sm font-medium mb-1.5 text-slate-700 dark:text-slate-200"
+          >
             Date
           </label>
           <input
+            id="date"
             type="date"
             max={todayString}
             value={date}
@@ -146,10 +157,14 @@ export default function Form({ onAdd }: FormProps) {
       </div>
 
       <div className="mt-4">
-        <label className="block text-sm font-medium mb-1.5 text-slate-700 dark:text-slate-200">
-          Note <span className="text-slate-400 font-normal">(optional)</span>
+        <label
+          htmlFor="note"
+          className="block text-sm font-medium mb-1.5 text-slate-700 dark:text-slate-200"
+        >
+          Note <span className="text-slate-600 font-normal">(optional)</span>
         </label>
         <textarea
+          id="note"
           value={note}
           onChange={(e) => setNote(e.target.value)}
           rows={3}
