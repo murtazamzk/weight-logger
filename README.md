@@ -1,73 +1,43 @@
-# React + TypeScript + Vite
+# Weight Logger
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A lightweight weight tracking app built with React, TypeScript, and Vite.
 
-Currently, two official plugins are available:
+## Stack
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+- **React** for UI rendering
+- **TypeScript** for type safety
+- **Vite** for fast development and build
+- **Tailwind CSS** for utility-based styling
+- **Recharts** for chart visualization
+- **Dexie** for IndexedDB local storage
+- **Zod** for form validation
+- **Mock Supabase adapter** for online sync behavior
 
-## React Compiler
+## Offline / Online sync
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+This project is designed to work offline first and sync to a mock remote backend when connectivity returns.
 
-## Expanding the ESLint configuration
+- Entries are written to **IndexedDB** immediately.
+- Offline entries remain visible and are stored locally.
+- When the app goes back online, pending local entries are synced.
+- The mock Supabase adapter persists data to **localStorage**, so refreshes do not lose synced data.
+- The UI displays connection status and sync state, including `Syncing…` and `Last sync`.
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+## Run locally
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```bash
+npm install
+npm run dev
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+## Build
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```bash
+npm run build
 ```
+
+## Notes
+
+- The remote backend is currently mocked in `src/service/adapters/supabase.adapter.ts`.
+- Mock remote data is kept in localStorage for persistence during development and refreshes.
+- This setup is usseful for testing offline-first sync behavior without a real Supabase project.
